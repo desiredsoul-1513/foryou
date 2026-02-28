@@ -3,6 +3,629 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyDear Delulu</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Quicksand:wght@300;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-deep: #0f0515;
+      --bg-mid: #1a0a2e;
+      --primary: #9333ea;
+      --primary-glow: #c084fc;
+      --accent: #f0abfc;
+      --accent-pink: #ec4899;
+      --text-light: #fae8ff;
+      --text-muted: #d8b4fe;
+      --glass-bg: rgba(30, 10, 50, 0.6);
+      --glass-border: rgba(192, 132, 252, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: var(--bg-deep);
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Animated Background Canvas */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+
+    /* Gradient Overlay */
+    .gradient-overlay {
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse at 20% 20%, rgba(147, 51, 234, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(30, 10, 50, 0.8) 0%, transparent 100%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Main Container */
+    .auth-container {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: fadeInScale 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: scale(0.9) translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    /* Glass Card */
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--glass-border);
+      border-radius: 40px;
+      padding: 3rem 3.5rem;
+      box-shadow: 
+        0 0 80px rgba(147, 51, 234, 0.2),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(240, 171, 252, 0.5), transparent);
+    }
+
+    /* Heart Icon */
+    .heart-icon {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 1.5rem;
+      position: relative;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .heart-icon svg {
+      filter: drop-shadow(0 0 20px rgba(236, 72, 153, 0.6));
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* Typography */
+    .title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.2rem;
+      font-weight: 600;
+      font-style: italic;
+      background: linear-gradient(135deg, var(--text-light) 0%, var(--accent) 50%, var(--accent-pink) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.02em;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+    }
+
+    /* PIN Display Area */
+    .pin-display {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .pin-box {
+      width: 52px;
+      height: 64px;
+      background: rgba(15, 5, 21, 0.6);
+      border: 2px solid rgba(147, 51, 234, 0.3);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .pin-box.active {
+      border-color: var(--primary-glow);
+      box-shadow: 0 0 20px rgba(192, 132, 252, 0.3);
+      background: rgba(147, 51, 234, 0.1);
+    }
+
+    .pin-box.filled {
+      border-color: var(--accent-pink);
+      background: rgba(236, 72, 153, 0.1);
+    }
+
+    .pin-box.error {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      animation: shake 0.5s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    .pin-dot {
+      width: 14px;
+      height: 14px;
+      background: linear-gradient(135deg, var(--accent-pink), var(--primary-glow));
+      border-radius: 50%;
+      opacity: 0;
+      transform: scale(0);
+      transition: all 0.2s ease;
+    }
+
+    .pin-box.filled .pin-dot {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Hidden Input */
+    .hidden-input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Instruction */
+    .instruction {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 500;
+      opacity: 0.8;
+      margin-top: 1rem;
+    }
+
+    /* Floating Hearts */
+    .floating-heart {
+      position: fixed;
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0;
+      animation: floatUp 4s ease-out forwards;
+    }
+
+    @keyframes floatUp {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(0) rotate(0deg);
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-400px) scale(1.5) rotate(20deg);
+      }
+    }
+
+    /* Success State */
+    .success-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 5, 21, 0.95);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    .success-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .success-heart {
+      width: 120px;
+      height: 120px;
+      animation: successPulse 0.6s ease-out forwards;
+      transform: scale(0);
+    }
+
+    @keyframes successPulse {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+
+    .success-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      color: var(--accent);
+      margin-top: 1.5rem;
+      opacity: 0;
+      animation: fadeIn 0.5s ease 0.3s forwards;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .glass-card {
+        padding: 2rem 1.5rem;
+        border-radius: 28px;
+        margin: 1rem;
+      }
+      .title {
+        font-size: 2.4rem;
+      }
+      .pin-box {
+        width: 44px;
+        height: 56px;
+      }
+      .pin-display {
+        gap: 8px;
+      }
+    }
+
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Canvas -->
+  <canvas id="bg-canvas"></canvas>
+  
+  <!-- Gradient Overlay -->
+  <div class="gradient-overlay"></div>
+
+  <!-- Auth Container -->
+  <div class="auth-container" onclick="focusInput()">
+    
+    <div class="glass-card">
+      <!-- Heart Icon -->
+      <div class="heart-icon">
+        <svg viewBox="0 0 24 24" fill="url(#heartGradient)">
+          <defs>
+            <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#f0abfc"/>
+              <stop offset="50%" stop-color="#e879f9"/>
+              <stop offset="100%" stop-color="#ec4899"/>
+            </linearGradient>
+          </defs>
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+      </div>
+
+      <!-- Title -->
+      <h1 class="title">MyDear Delulu</h1>
+      <p class="subtitle">Enter your secret pin</p>
+
+      <!-- PIN Display -->
+      <div class="pin-display" id="pinDisplay">
+        <div class="pin-box active" data-index="0">
+          <div class="pin-dot"></div>
+        </div>
+        <div class="pin-box" data-index="1">
+          <div class="pin-dot"></div>
+        </div>
+        <div class="pin-box" data-index="2">
+          <div class="pin-dot"></div>
+        </div>
+        <div class="pin-box" data-index="3">
+          <div class="pin-dot"></div>
+        </div>
+      </div>
+
+      <!-- Hidden Input -->
+      <input 
+        type="password" 
+        id="pinInput" 
+        class="hidden-input" 
+        maxlength="4" 
+        inputmode="numeric" 
+        pattern="[0-9]*"
+        autocomplete="off"
+        aria-label="Enter PIN"
+      >
+
+      <p class="instruction">Click anywhere to enter PIN</p>
+    </div>
+  </div>
+
+  <!-- Success Overlay -->
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-heart">
+      <svg viewBox="0 0 24 24" fill="#ec4899">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      </svg>
+    </div>
+    <p class="success-text">Welcome, my love...</p>
+  </div>
+
+  <script>
+    // ==========================================
+    // CONFIGURATION - CHANGE YOUR PIN HERE
+    // ==========================================
+    const CORRECT_PIN = "1434"; // Change this to your desired PIN
+    // ==========================================
+
+    // State
+    let enteredPin = "";
+    const pinLength = 4;
+
+    // DOM Elements
+    const pinInput = document.getElementById('pinInput');
+    const pinDisplay = document.getElementById('pinDisplay');
+    const pinBoxes = document.querySelectorAll('.pin-box');
+    const successOverlay = document.getElementById('successOverlay');
+
+    // Focus input on load and click
+    function focusInput() {
+      pinInput.focus();
+    }
+    window.addEventListener('load', focusInput);
+
+    // Handle PIN input
+    pinInput.addEventListener('input', (e) => {
+      const value = e.target.value.replace(/\D/g, ''); // Numbers only
+      enteredPin = value.slice(0, pinLength);
+      updatePinDisplay();
+
+      // Check PIN when complete
+      if (enteredPin.length === pinLength) {
+        setTimeout(checkPin, 300);
+      }
+    });
+
+    // Handle backspace/key navigation
+    pinInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && enteredPin.length > 0) {
+        // Let the input handle it naturally
+      }
+    });
+
+    // Update visual display
+    function updatePinDisplay() {
+      pinBoxes.forEach((box, index) => {
+        const dot = box.querySelector('.pin-dot');
+        
+        if (index < enteredPin.length) {
+          box.classList.add('filled');
+          box.classList.remove('active');
+        } else {
+          box.classList.remove('filled');
+        }
+
+        if (index === enteredPin.length) {
+          box.classList.add('active');
+        } else {
+          box.classList.remove('active');
+        }
+      });
+    }
+
+    // Check if PIN is correct
+    function checkPin() {
+      if (enteredPin === CORRECT_PIN) {
+        handleSuccess();
+      } else {
+        handleError();
+      }
+    }
+
+    // Success animation
+    function handleSuccess() {
+      createFloatingHearts(20);
+      
+      setTimeout(() => {
+        successOverlay.classList.add('active');
+        
+        // Redirect after animation
+        setTimeout(() => {
+          window.location.href = 'aniv.html';
+        }, 2000);
+      }, 500);
+    }
+
+    // Error animation
+    function handleError() {
+      pinBoxes.forEach(box => {
+        box.classList.add('error');
+      });
+
+      setTimeout(() => {
+        pinBoxes.forEach(box => {
+          box.classList.remove('error', 'filled');
+        });
+        enteredPin = "";
+        pinInput.value = "";
+        updatePinDisplay();
+      }, 600);
+    }
+
+    // Create floating hearts
+    function createFloatingHearts(count) {
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+          const heart = document.createElement('div');
+          heart.className = 'floating-heart';
+          heart.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="#ec4899"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+          heart.style.left = Math.random() * 100 + 'vw';
+          heart.style.bottom = '0';
+          heart.style.transform = `rotate(${Math.random() * 30 - 15}deg)`;
+          document.body.appendChild(heart);
+
+          setTimeout(() => heart.remove(), 4000);
+        }, i * 100);
+      }
+    }
+
+    // ==========================================
+    // BACKGROUND PARTICLE ANIMATION
+    // ==========================================
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let particles = [];
+    let mouseX = 0;
+    let mouseY = 0;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Track mouse
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    // Particle class
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = (Math.random() - 0.5) * 0.5;
+        this.speedY = (Math.random() - 0.5) * 0.5;
+        this.opacity = Math.random() * 0.5 + 0.2;
+        this.isHeart = Math.random() > 0.7;
+        this.hue = Math.random() * 60 + 270; // Purple range
+      }
+
+      update() {
+        // Mouse attraction
+        const dx = mouseX - this.x;
+        const dy = mouseY - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        
+        if (dist < 200) {
+          this.x += dx * 0.002;
+          this.y += dy * 0.002;
+        }
+
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        // Wrap around
+        if (this.x < 0) this.x = canvas.width;
+        if (this.x > canvas.width) this.x = 0;
+        if (this.y < 0) this.y = canvas.height;
+        if (this.y > canvas.height) this.y = 0;
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        
+        if (this.isHeart) {
+          // Draw mini heart
+          ctx.fillStyle = `hsl(${this.hue}, 80%, 70%)`;
+          ctx.font = `${this.size * 5}px serif`;
+          ctx.fillText('♥', this.x, this.y);
+        } else {
+          // Draw glowing dot
+          const gradient = ctx.createRadialGradient(
+            this.x, this.y, 0,
+            this.x, this.y, this.size * 2
+          );
+          gradient.addColorStop(0, `hsla(${this.hue}, 80%, 70%, 1)`);
+          gradient.addColorStop(1, `hsla(${this.hue}, 80%, 70%, 0)`);
+          
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        
+        ctx.restore();
+      }
+    }
+
+    // Initialize particles
+    function initParticles() {
+      const count = Math.min(100, Math.floor(canvas.width * canvas.height / 15000));
+      for (let i = 0; i < count; i++) {
+        particles.push(new Particle());
+      }
+    }
+    initParticles();
+
+    // Animation loop
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HeartConnect - Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
