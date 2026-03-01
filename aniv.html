@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Anniversary My Love</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Quicksand:wght@300;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-deep: #0a0612;
+      --bg-mid: #150d24;
+      --primary: #9333ea;
+      --primary-glow: #c084fc;
+      --accent: #f0abfc;
+      --accent-pink: #ec4899;
+      --accent-gold: #fbbf24;
+      --text-light: #fdf4ff;
+      --text-muted: #e9d5ff;
+      --glass-bg: rgba(20, 10, 35, 0.7);
+      --glass-border: rgba(192, 132, 252, 0.2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-light);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Background Canvas */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Gradient Overlays */
+    .gradient-layer {
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(circle at 50% 0%, rgba(147, 51, 234, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 0% 100%, rgba(236, 72, 153, 0.15) 0%, transparent 50%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Main Container */
+    .main-container {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 4rem 1rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      margin-bottom: 4rem;
+      opacity: 0;
+      animation: fadeUp 1s ease-out 0.3s forwards;
+    }
+
+    .hero-pretitle {
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      color: var(--accent-gold);
+      margin-bottom: 1rem;
+      display: inline-block;
+      padding: 0.5rem 1.5rem;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-radius: 50px;
+      background: rgba(251, 191, 36, 0.05);
+    }
+
+    .hero-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(4rem, 12vw, 8rem);
+      color: var(--text-light);
+      line-height: 1;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 40px rgba(236, 72, 153, 0.4);
+    }
+
+    .hero-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-style: italic;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* Letter Card */
+    .letter-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1px solid var(--glass-border);
+      border-radius: 32px;
+      padding: 3rem 2.5rem;
+      max-width: 700px;
+      width: 100%;
+      box-shadow: 
+        0 0 60px rgba(147, 51, 234, 0.15),
+        0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      position: relative;
+      opacity: 0;
+      animation: fadeUp 1.2s ease-out 0.6s forwards;
+    }
+
+    .letter-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent-pink), transparent);
+      opacity: 0.6;
+    }
+
+    /* Letter Content */
+    .letter-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(192, 132, 252, 0.1);
+    }
+
+    .letter-date {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      color: var(--accent-gold);
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    .letter-greeting {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--text-light), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .letter-body {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      line-height: 1.9;
+      color: var(--text-muted);
+      text-align: left;
+    }
+
+    .letter-body p {
+      margin-bottom: 1.5rem;
+      text-indent: 2rem;
+    }
+
+    .letter-body .highlight {
+      color: var(--text-light);
+      font-weight: 600;
+    }
+
+    .letter-body .heart-text {
+      color: var(--accent-pink);
+      font-weight: 600;
+    }
+
+    /* Signature */
+    .letter-signature {
+      text-align: right;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(192, 132, 252, 0.1);
+    }
+
+    .signature-text {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3rem;
+      color: var(--accent-pink);
+      margin-bottom: 0.5rem;
+    }
+
+    .signature-sub {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Floating Heart Elements */
+    .floating-heart {
+      position: absolute;
+      opacity: 0.6;
+      animation: float 6s ease-in-out infinite;
+      filter: drop-shadow(0 0 10px rgba(236, 72, 153, 0.5));
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+    }
+
+    /* Timeline Section */
+    .timeline {
+      margin-top: 6rem;
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 900px;
+      opacity: 0;
+      animation: fadeUp 1.2s ease-out 0.9s forwards;
+    }
+
+    .timeline-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(192, 132, 252, 0.15);
+      border-radius: 20px;
+      padding: 2rem;
+      text-align: center;
+      width: 180px;
+      transition: all 0.3s ease;
+    }
+
+    .timeline-item:hover {
+      background: rgba(147, 51, 234, 0.1);
+      border-color: var(--primary-glow);
+      transform: translateY(-5px);
+    }
+
+    .timeline-number {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3.5rem;
+      color: var(--accent-gold);
+      line-height: 1;
+    }
+
+    .timeline-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .letter-card {
+        padding: 2rem 1.5rem;
+        border-radius: 24px;
+      }
+      .letter-body {
+        font-size: 1.15rem;
+      }
+      .hero-title {
+        font-size: 3.5rem;
+      }
+    }
+
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Canvas -->
+  <canvas id="bg-canvas"></canvas>
+  
+  <!-- Gradient Layer -->
+  <div class="gradient-layer"></div>
+
+  <!-- Main Container -->
+  <main class="main-container">
+    
+    <!-- Hero Section -->
+    <section class="hero">
+      <span class="hero-pretitle">One Year Together</span>
+      <h1 class="hero-title">Happy Anniversary</h1>
+      <p class="hero-subtitle">To the one who holds my heart</p>
+    </section>
+
+    <!-- Letter Card -->
+    <article class="letter-card">
+      
+      <!-- Decorative Hearts -->
+      <svg class="floating-heart" style="top: -20px; left: 20px; width: 30px;" viewBox="0 0 24 24" fill="#ec4899">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      </svg>
+      <svg class="floating-heart" style="bottom: 30px; right: 30px; width: 24px; animation-delay: 1s;" viewBox="0 0 24 24" fill="#fbbf24">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      </svg>
+
+      <header class="letter-header">
+        <p class="letter-date">Our First Year</p>
+        <h2 class="letter-greeting">My Dear Delulu</h2>
+      </header>
+
+      <div class="letter-body">
+        <p>
+          Today marks 365 days since we started this journey. Looking back, I realize that <span class="highlight">love isn't just about the perfect moments</span>—it's about choosing each other through the imperfect ones too.
+        </p>
+        <p>
+          We have faced <span class="highlight">so many problems</span>. We've had storms that shook us, doubts that tested us, and moments where the weight of the world felt too heavy. Yet, here we are. Standing stronger than before.
+        </p>
+        <p>
+          Through every tear and every obstacle, <span class="heart-text">my heart never wavered in its choice</span>. It chose you yesterday. It chooses you today. And it will choose you every single tomorrow. You are my calm in the chaos, my light in the dark, and my favorite reason to smile.
+        </p>
+        <p>
+          Thank you for fighting for us. Thank you for staying. Thank you for being the beautiful soul you are.
+        </p>
+      </div>
+
+      <footer class="letter-signature">
+        <p class="signature-text">Forever Yours</p>
+        <p class="signature-sub">With all my heart, always</p>
+      </footer>
+    </article>
+
+    <!-- Timeline Stats -->
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-number">365</div>
+        <div class="timeline-label">Days</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-number">52</div>
+        <div class="timeline-label">Weeks</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-number">12</div>
+        <div class="timeline-label">Months</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-number">1</div>
+        <div class="timeline-label">Infinity</div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // ==========================================
+    // PARTICLE BACKGROUND ANIMATION
+    // ==========================================
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let particles = [];
+    let width, height;
+    let mouseX = 0, mouseY = 0;
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    document.addEventListener('mousemove', e => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    class Particle {
+      constructor() {
+        this.reset(true);
+      }
+
+      reset(initial = false) {
+        this.x = Math.random() * width;
+        this.y = initial ? Math.random() * height : height + 10;
+        this.size = Math.random() * 2 + 0.5;
+        this.speedY = -(Math.random() * 0.8 + 0.2); // Rise up
+        this.speedX = (Math.random() - 0.5) * 0.3;
+        this.opacity = Math.random() * 0.6 + 0.1;
+        this.type = Math.random() > 0.6 ? 'heart' : 'sparkle';
+        this.color = Math.random() > 0.5 
+          ? `rgba(236, 72, 153, ${this.opacity})` // Pink
+          : `rgba(251, 191, 36, ${this.opacity})`; // Gold
+      }
+
+      update() {
+        this.y += this.speedY;
+        this.x += this.speedX;
+
+        // Subtle mouse interaction
+        const dx = mouseX - this.x;
+        const dy = mouseY - this.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 150) {
+          this.x -= dx * 0.01;
+          this.y -= dy * 0.01;
+        }
+
+        // Reset if out of bounds
+        if (this.y < -10 || this.x < -10 || this.x > width + 10) {
+          this.reset();
+        }
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        ctx.fillStyle = this.color;
+        
+        if (this.type === 'heart') {
+          ctx.font = `${this.size * 8}px serif`;
+          ctx.fillText('♥', this.x, this.y);
+        } else {
+          // Sparkle / Glowing dot
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+          
+          // Add glow
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = this.color;
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    }
+
+    function init() {
+      particles = [];
+      const count = Math.min(80, Math.floor(width * height / 15000));
+      for (let i = 0; i < count; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animate);
+    }
+
+    init();
+    animate();
+  </script>
+</body>
+</html>
