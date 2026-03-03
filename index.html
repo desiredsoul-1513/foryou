@@ -256,10 +256,15 @@
     }
 
     .success-text {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2rem; color: var(--primary); margin-top: 1.5rem;
-      opacity: 0; animation: fadeIn 0.5s ease 0.3s forwards;
-    }
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  color: var(--primary);
+  margin-top: 1.5rem;
+  opacity: 0;
+  animation: fadeIn 0.5s ease 0.3s forwards;
+  text-align: center; /* Centers the text */
+  width: 100%;        /* Ensures the element spans the full width of its container */
+}
 
     @keyframes fadeIn { to { opacity: 1; } }
 
