@@ -11,41 +11,80 @@
   
   <style>
     :root {
-      --bg-deep: #0f0515;
-      --bg-mid: #1a0a2e;
-      --primary: #9333ea;
-      --primary-glow: #c084fc;
-      --accent: #f0abfc;
-      --accent-pink: #ec4899;
-      --text-light: #fae8ff;
-      --text-muted: #d8b4fe;
-      --glass-bg: rgba(30, 10, 50, 0.6);
-      --glass-border: rgba(192, 132, 252, 0.3);
+      --bg-light: #fdfcff;
+      --bg-gradient-start: #fff5ff;
+      --bg-gradient-end: #f3e8ff;
+      --primary: #7c3aed; /* Vibrant Purple */
+      --primary-glow: #a78bfa;
+      --accent-pink: #db2777;
+      --accent-gold: #d97706;
+      --text-dark: #1e1b4b;
+      --text-muted: #6b7280;
+      --glass-bg: rgba(255, 255, 255, 0.65);
+      --glass-border: rgba(167, 139, 250, 0.3);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Quicksand', sans-serif;
-      background: var(--bg-deep);
+      background: linear-gradient(135deg, var(--bg-gradient-start) 0%, #ffffff 50%, var(--bg-gradient-end) 100%);
       min-height: 100vh;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
     }
 
+    /* Main Background Canvas (Sparkles & Stars) */
     #bg-canvas { position: fixed; inset: 0; z-index: 0; }
 
+    /* Soft Gradient Overlay */
     .gradient-overlay {
       position: fixed; inset: 0;
       background: 
-        radial-gradient(ellipse at 20% 20%, rgba(147, 51, 234, 0.15) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(30, 10, 50, 0.8) 0%, transparent 100%);
+        radial-gradient(circle at 10% 20%, rgba(167, 139, 250, 0.2) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(219, 39, 119, 0.1) 0%, transparent 40%);
       z-index: 1; pointer-events: none;
     }
 
+    /* Decorative Floating Orbs (Pure CSS) */
+    .decoration-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.4;
+      z-index: 1;
+      pointer-events: none;
+      animation: drift 20s infinite alternate ease-in-out;
+    }
+    
+    .orb-1 { width: 400px; height: 400px; background: rgba(124, 58, 237, 0.2); top: -100px; left: -100px; }
+    .orb-2 { width: 300px; height: 300px; background: rgba(219, 39, 119, 0.15); bottom: -50px; right: -50px; animation-delay: -5s; }
+    .orb-3 { width: 200px; height: 200px; background: rgba(217, 119, 6, 0.1); top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: -10s; }
+
+    @keyframes drift {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(30px, 30px) scale(1.1); }
+    }
+
+    /* Floating SVG Decorations */
+    .floating-decor {
+      position: fixed;
+      z-index: 2;
+      opacity: 0.6;
+      pointer-events: none;
+      animation: floatSpin 15s infinite linear;
+    }
+
+    @keyframes floatSpin {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-30px) rotate(10deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+
+    /* Main Container */
     .auth-container {
       position: relative; z-index: 10;
       display: flex; flex-direction: column; align-items: center;
@@ -58,52 +97,79 @@
       to { opacity: 1; transform: scale(1) translateY(0); }
     }
 
+    /* Glass Card with Glowing Border */
     .glass-card {
       background: var(--glass-bg);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border: 1px solid var(--glass-border);
       border-radius: 40px;
       padding: 3rem 3.5rem;
-      box-shadow: 0 0 80px rgba(147, 51, 234, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+      box-shadow: 
+        0 20px 40px rgba(124, 58, 237, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.6) inset;
       text-align: center;
       position: relative;
+      animation: cardGlow 4s infinite ease-in-out alternate;
     }
 
+    @keyframes cardGlow {
+      0% { box-shadow: 0 20px 40px rgba(124, 58, 237, 0.1), 0 0 20px rgba(167, 139, 250, 0.2) inset; }
+      100% { box-shadow: 0 25px 50px rgba(124, 58, 237, 0.15), 0 0 30px rgba(217, 119, 6, 0.1) inset; }
+    }
+
+    /* Golden/Purple Gradient Border on Top */
     .glass-card::before {
       content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(240, 171, 252, 0.5), transparent);
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--primary), #d97706, var(--accent-pink));
+      border-radius: 40px 40px 0 0;
+    }
+
+    /* Sparkle Elements around card */
+    .card-sparkle {
+      position: absolute;
+      width: 10px; height: 10px;
+      background: var(--accent-gold);
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      animation: sparkleAppear 2s infinite ease-in-out;
+    }
+    .sparkle-1 { top: -5px; left: 20%; animation-delay: 0s; }
+    .sparkle-2 { top: 40%; right: -10px; animation-delay: 0.5s; }
+    .sparkle-3 { bottom: -5px; left: 60%; animation-delay: 1s; }
+    .sparkle-4 { top: 20%; left: -10px; animation-delay: 1.5s; }
+
+    @keyframes sparkleAppear {
+      0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+      50% { opacity: 1; transform: scale(1) rotate(180deg); }
     }
 
     .heart-icon {
-      width: 70px; height: 70px; margin: 0 auto 1.5rem;
+      width: 80px; height: 80px; margin: 0 auto 1.5rem;
       position: relative;
       animation: pulse 2s ease-in-out infinite;
     }
 
-    .heart-icon svg { filter: drop-shadow(0 0 20px rgba(236, 72, 153, 0.6)); }
+    .heart-icon svg { filter: drop-shadow(0 5px 15px rgba(124, 58, 237, 0.4)); }
 
     @keyframes pulse {
       0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
+      50% { transform: scale(1.15); }
     }
 
     .title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 3.2rem; font-weight: 600; font-style: italic;
-      background: linear-gradient(135deg, var(--text-light) 0%, var(--accent) 50%, var(--accent-pink) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: 3.4rem; font-weight: 600; font-style: italic;
+      color: var(--primary);
       margin-bottom: 0.5rem;
       letter-spacing: 0.02em;
+      text-shadow: 0 2px 10px rgba(124, 58, 237, 0.1);
     }
 
     .subtitle {
       color: var(--text-muted);
       font-size: 0.95rem;
-      font-weight: 500;
+      font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       margin-bottom: 2.5rem;
@@ -112,9 +178,9 @@
     .pin-display { display: flex; gap: 12px; justify-content: center; margin-bottom: 2rem; }
 
     .pin-box {
-      width: 52px; height: 64px;
-      background: rgba(15, 5, 21, 0.6);
-      border: 2px solid rgba(147, 51, 234, 0.3);
+      width: 56px; height: 68px;
+      background: rgba(255, 255, 255, 0.6);
+      border: 2px solid rgba(124, 58, 237, 0.2);
       border-radius: 16px;
       display: flex; align-items: center; justify-content: center;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -123,12 +189,22 @@
 
     .pin-box.active {
       border-color: var(--primary-glow);
-      box-shadow: 0 0 20px rgba(192, 132, 252, 0.3);
-      background: rgba(147, 51, 234, 0.1);
+      box-shadow: 0 0 20px rgba(167, 139, 250, 0.4);
+      background: rgba(255, 255, 255, 0.9);
+      transform: translateY(-3px);
     }
 
-    .pin-box.filled { border-color: var(--accent-pink); background: rgba(236, 72, 153, 0.1); }
-    .pin-box.error { border-color: #ef4444; background: rgba(239, 68, 68, 0.1); animation: shake 0.5s ease-in-out; }
+    .pin-box.filled { 
+      border-color: var(--primary); 
+      background: rgba(124, 58, 237, 0.05); 
+      transform: scale(0.95);
+    }
+    
+    .pin-box.error { 
+      border-color: #ef4444; 
+      background: rgba(239, 68, 68, 0.05); 
+      animation: shake 0.5s ease-in-out; 
+    }
 
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
@@ -137,8 +213,8 @@
     }
 
     .pin-dot {
-      width: 14px; height: 14px;
-      background: linear-gradient(135deg, var(--accent-pink), var(--primary-glow));
+      width: 16px; height: 16px;
+      background: linear-gradient(135deg, var(--primary), var(--accent-pink));
       border-radius: 50%;
       opacity: 0; transform: scale(0);
       transition: all 0.2s ease;
@@ -147,8 +223,6 @@
     .pin-box.filled .pin-dot { opacity: 1; transform: scale(1); }
 
     .hidden-input { position: absolute; opacity: 0; pointer-events: none; }
-
-    .instruction { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; opacity: 0.8; margin-top: 1rem; }
 
     .floating-heart {
       position: fixed; pointer-events: none; z-index: 5; opacity: 0;
@@ -161,9 +235,10 @@
       100% { opacity: 0; transform: translateY(-400px) scale(1.5) rotate(20deg); }
     }
 
+    /* Success Overlay */
     .success-overlay {
       position: fixed; inset: 0;
-      background: rgba(15, 5, 21, 0.95);
+      background: rgba(253, 252, 255, 0.98); 
       z-index: 100;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       opacity: 0; pointer-events: none;
@@ -182,34 +257,64 @@
 
     .success-text {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 2rem; color: var(--accent); margin-top: 1.5rem;
+      font-size: 2rem; color: var(--primary); margin-top: 1.5rem;
       opacity: 0; animation: fadeIn 0.5s ease 0.3s forwards;
     }
 
     @keyframes fadeIn { to { opacity: 1; } }
 
+    /* Responsive */
     @media (max-width: 480px) {
       .glass-card { padding: 2rem 1.5rem; border-radius: 28px; margin: 1rem; }
       .title { font-size: 2.4rem; }
-      .pin-box { width: 44px; height: 56px; }
+      .pin-box { width: 48px; height: 60px; }
       .pin-display { gap: 8px; }
     }
   </style>
 </head>
 <body>
 
+  <!-- 1. Background Canvas (Particles) -->
   <canvas id="bg-canvas"></canvas>
+
+  <!-- 2. Gradient Overlay -->
   <div class="gradient-overlay"></div>
 
+  <!-- 3. Ambient Orbs -->
+  <div class="decoration-orb orb-1"></div>
+  <div class="decoration-orb orb-2"></div>
+  <div class="decoration-orb orb-3"></div>
+
+  <!-- 4. Floating SVG Decorations -->
+  <div class="floating-decor" style="top: 10%; left: 10%; animation-duration: 20s;">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="rgba(124, 58, 237, 0.2)"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+  </div>
+  <div class="floating-decor" style="bottom: 15%; right: 15%; animation-duration: 25s; animation-delay: -5s;">
+    <svg width="60" height="60" viewBox="0 0 24 24" fill="rgba(219, 39, 119, 0.15)"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+  </div>
+  <div class="floating-decor" style="top: 70%; left: 80%; animation-duration: 18s; animation-delay: -8s;">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="rgba(217, 119, 6, 0.3)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+  </div>
+   <div class="floating-decor" style="top: 20%; right: 20%; animation-duration: 22s; animation-delay: -2s;">
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="rgba(167, 139, 250, 0.25)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+  </div>
+
+  <!-- Main Auth Container -->
   <div class="auth-container" onclick="focusInput()">
     <div class="glass-card">
+      <!-- Decorative Sparkles on Card -->
+      <div class="card-sparkle sparkle-1"></div>
+      <div class="card-sparkle sparkle-2"></div>
+      <div class="card-sparkle sparkle-3"></div>
+      <div class="card-sparkle sparkle-4"></div>
+
       <div class="heart-icon">
         <svg viewBox="0 0 24 24" fill="url(#heartGradient)">
           <defs>
             <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#f0abfc"/>
-              <stop offset="50%" stop-color="#e879f9"/>
-              <stop offset="100%" stop-color="#ec4899"/>
+              <stop offset="0%" stop-color="#a78bfa"/>
+              <stop offset="50%" stop-color="#8b5cf6"/>
+              <stop offset="100%" stop-color="#7c3aed"/>
             </linearGradient>
           </defs>
           <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
@@ -226,13 +331,13 @@
       </div>
 
       <input type="password" id="pinInput" class="hidden-input" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="Enter PIN">
-     <!-- <p class="instruction">Click anywhere to enter PIN</p> -->
     </div>
   </div>
 
+  <!-- Success Overlay -->
   <div class="success-overlay" id="successOverlay">
     <div class="success-heart">
-      <svg viewBox="0 0 24 24" fill="#ec4899">
+      <svg viewBox="0 0 24 24" fill="#7c3aed">
         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
       </svg>
     </div>
@@ -243,18 +348,14 @@
     // ==========================================
     // SECURITY CONFIGURATION
     // ==========================================
-    // PASTE THE HASH YOU GENERATED IN STEP 1 HERE.
-    // THE PIN '1234' IS JUST AN EXAMPLE. USE YOUR OWN HASH.
     const PIN_HASH = "b3b32ef85491ba019823218698a8dc82ed5ea963b1c0444cda283894440de5f9"; 
     
-    // Helper: Hash function using SHA-256
     async function hashPin(pin) {
       const encoder = new TextEncoder();
       const data = encoder.encode(pin);
       const hashBuffer = await crypto.subtle.digest('SHA-256', data);
       const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-      return hashHex;
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
     // ==========================================
 
@@ -274,10 +375,7 @@
       updatePinDisplay();
 
       if (enteredPin.length === pinLength) {
-        // Secure Check: Hash the input and compare to stored hash
         const inputHash = await hashPin(enteredPin);
-        
-        // Prevent timing attacks by comparing length first (though simple string compare is fine for this use case)
         if (inputHash === PIN_HASH) {
           handleSuccess();
         } else {
@@ -303,7 +401,7 @@
     }
 
     function handleSuccess() {
-      createFloatingHearts(20);
+      createFloatingHearts(40); // More hearts on success
       setTimeout(() => {
         successOverlay.classList.add('active');
         setTimeout(() => { window.location.href = 'aniv.html'; }, 2000);
@@ -325,16 +423,20 @@
         setTimeout(() => {
           const heart = document.createElement('div');
           heart.className = 'floating-heart';
-          heart.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="#ec4899"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+          const colors = ['#7c3aed', '#a78bfa', '#db2777', '#d97706'];
+          const randomColor = colors[Math.floor(Math.random() * colors.length)];
+          heart.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="${randomColor}"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
           heart.style.left = Math.random() * 100 + 'vw';
           heart.style.bottom = '0';
           document.body.appendChild(heart);
           setTimeout(() => heart.remove(), 4000);
-        }, i * 100);
+        }, i * 50);
       }
     }
 
-    // Background Particle Animation
+    // ==========================================
+    // ENHANCED BACKGROUND PARTICLE ANIMATION
+    // ==========================================
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
@@ -347,42 +449,84 @@
 
     class Particle {
       constructor() { this.reset(); }
+      
       reset() {
-        this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
+        this.x = Math.random() * canvas.width; 
+        this.y = Math.random() * canvas.height;
         this.size = Math.random() * 3 + 1;
-        this.speedX = (Math.random() - 0.5) * 0.5; this.speedY = (Math.random() - 0.5) * 0.5;
-        this.opacity = Math.random() * 0.5 + 0.2;
-        this.isHeart = Math.random() > 0.7;
-        this.hue = Math.random() * 60 + 270;
+        this.speedX = (Math.random() - 0.5) * 0.3; 
+        this.speedY = (Math.random() - 0.5) * 0.3;
+        this.opacity = Math.random() * 0.4 + 0.1;
+        
+        // Randomly decide type: 0=Sparkle, 1=Heart, 2=Star
+        this.type = Math.floor(Math.random() * 3); 
+        
+        // Color Palette
+        const colors = [
+          'rgba(124, 58, 237,',  // Purple
+          'rgba(167, 139, 250,', // Light Purple
+          'rgba(217, 119, 6,',   // Gold
+          'rgba(219, 39, 119,'   // Pink
+        ];
+        this.colorPrefix = colors[Math.floor(Math.random() * colors.length)];
       }
+
       update() {
-        const dx = mouseX - this.x; const dy = mouseY - this.y; const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 200) { this.x += dx * 0.002; this.y += dy * 0.002; }
-        this.x += this.speedX; this.y += this.speedY;
-        if (this.x < 0) this.x = canvas.width; if (this.x > canvas.width) this.x = 0;
-        if (this.y < 0) this.y = canvas.height; if (this.y > canvas.height) this.y = 0;
+        // Mouse interaction: Particles are gently pushed away
+        const dx = mouseX - this.x; 
+        const dy = mouseY - this.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 150) {
+            this.x -= dx * 0.01;
+            this.y -= dy * 0.01;
+        }
+
+        this.x += this.speedX; 
+        this.y += this.speedY;
+
+        // Wrap around
+        if (this.x < 0) this.x = canvas.width; 
+        if (this.x > canvas.width) this.x = 0;
+        if (this.y < 0) this.y = canvas.height; 
+        if (this.y > canvas.height) this.y = 0;
       }
+
       draw() {
-        ctx.save(); ctx.globalAlpha = this.opacity;
-        if (this.isHeart) {
-          ctx.fillStyle = `hsl(${this.hue}, 80%, 70%)`;
-          ctx.font = `${this.size * 5}px serif`; ctx.fillText('♥', this.x, this.y);
-        } else {
-          const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 2);
-          gradient.addColorStop(0, `hsla(${this.hue}, 80%, 70%, 1)`);
-          gradient.addColorStop(1, `hsla(${this.hue}, 80%, 70%, 0)`);
-          ctx.fillStyle = gradient; ctx.beginPath(); ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2); ctx.fill();
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        ctx.fillStyle = this.colorPrefix + '1)'; // Add opacity closure
+        
+        if (this.type === 0) { 
+          // Sparkle (Circle)
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        } 
+        else if (this.type === 1) { 
+          // Heart
+          ctx.font = `${this.size * 6}px serif`;
+          ctx.fillText('♥', this.x, this.y);
+        } 
+        else { 
+          // Star
+          ctx.font = `${this.size * 5}px serif`;
+          ctx.fillText('★', this.x, this.y);
         }
         ctx.restore();
       }
     }
 
     function initParticles() {
-      const count = Math.min(100, Math.floor(canvas.width * canvas.height / 15000));
+      const count = Math.min(150, Math.floor(canvas.width * canvas.height / 10000));
       for (let i = 0; i < count; i++) particles.push(new Particle());
     }
     initParticles();
-    function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
+
+    function animate() { 
+      ctx.clearRect(0, 0, canvas.width, canvas.height); 
+      particles.forEach(p => { p.update(); p.draw(); }); 
+      requestAnimationFrame(animate); 
+    }
     animate();
   </script>
 </body>
